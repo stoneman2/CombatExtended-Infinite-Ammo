@@ -4,17 +4,28 @@ using CombatExtendedInfiniteAmmo.Patches;
 
 namespace CombatExtendedInfiniteAmmo;
 
+public enum InfiniteAmmoMode
+{
+    Off,
+    InfiniteReserve,
+    InfiniteAmmo
+}
+
 public class InfiniteAmmoSettings : ModSettings
 {
-    public bool infiniteAmmo = false;
-    public bool infiniteReserve = true;
+    public InfiniteAmmoMode ammoMode = InfiniteAmmoMode.InfiniteReserve;
     public bool infiniteTurretAmmo = false;
+    public bool infiniteMortarAmmo = false;
     public bool infiniteGrenades = false;
     public bool playerFactionOnly = true;
     public bool enableBalancing = false;
     public float ammoCostMultiplier = 5f;
     public bool limitAmmoStackSize = true;
     public bool limitAmmoSpawns = true;
+    
+    // Convenience properties for backward compatibility with patch code
+    public bool infiniteAmmo => ammoMode == InfiniteAmmoMode.InfiniteAmmo;
+    public bool infiniteReserve => ammoMode == InfiniteAmmoMode.InfiniteReserve;
     
     private bool _prevEnableBalancing = false;
     private float _prevAmmoCostMultiplier = 5f;
@@ -23,9 +34,34 @@ public class InfiniteAmmoSettings : ModSettings
     public override void ExposeData()
     {
         base.ExposeData();
-        Scribe_Values.Look(ref infiniteAmmo, "infiniteAmmo", false);
-        Scribe_Values.Look(ref infiniteReserve, "infiniteReserve", false);
+        
+        // Migration: load old booleans if present, then save as enum
+        if (Scribe.mode == LoadSaveMode.LoadingVars)
+        {
+            bool oldInfiniteAmmo = false;
+            bool oldInfiniteReserve = false;
+            Scribe_Values.Look(ref oldInfiniteAmmo, "infiniteAmmo", false);
+            Scribe_Values.Look(ref oldInfiniteReserve, "infiniteReserve", false);
+            
+            // Check if we have the new enum value saved
+            Scribe_Values.Look(ref ammoMode, "ammoMode", InfiniteAmmoMode.Off);
+            
+            // If ammoMode is Off but old booleans were set, migrate
+            if (ammoMode == InfiniteAmmoMode.Off)
+            {
+                if (oldInfiniteAmmo)
+                    ammoMode = InfiniteAmmoMode.InfiniteAmmo;
+                else if (oldInfiniteReserve)
+                    ammoMode = InfiniteAmmoMode.InfiniteReserve;
+            }
+        }
+        else
+        {
+            Scribe_Values.Look(ref ammoMode, "ammoMode");
+        }
+        
         Scribe_Values.Look(ref infiniteTurretAmmo, "infiniteTurretAmmo", false);
+        Scribe_Values.Look(ref infiniteMortarAmmo, "infiniteMortarAmmo", false);
         Scribe_Values.Look(ref infiniteGrenades, "infiniteGrenades", false);
         Scribe_Values.Look(ref playerFactionOnly, "playerFactionOnly", true);
         Scribe_Values.Look(ref enableBalancing, "enableBalancing", false);
@@ -58,25 +94,33 @@ public class InfiniteAmmoSettings : ModSettings
         );
         list.GapLine();
         
-        // Infinite Ammo (No Reload)
-        list.CheckboxLabeled(
-            "CEInfiniteAmmo_InfiniteAmmo_Title".Translate(), 
-            ref infiniteAmmo, 
-            "CEInfiniteAmmo_InfiniteAmmo_Desc".Translate()
-        );
+        // Ammo Mode radio buttons
+        list.Label("CEInfiniteAmmo_AmmoMode_Title".Translate());
+        list.Gap(4f);
         
-        // Infinite Reserve
-        list.CheckboxLabeled(
-            "CEInfiniteAmmo_InfiniteReserve_Title".Translate(), 
-            ref infiniteReserve, 
-            "CEInfiniteAmmo_InfiniteReserve_Desc".Translate()
-        );
+        if (list.RadioButton("CEInfiniteAmmo_AmmoMode_Off".Translate(), ammoMode == InfiniteAmmoMode.Off, tooltip: "CEInfiniteAmmo_AmmoMode_Off_Desc".Translate()))
+            ammoMode = InfiniteAmmoMode.Off;
+        
+        if (list.RadioButton("CEInfiniteAmmo_InfiniteReserve_Title".Translate(), ammoMode == InfiniteAmmoMode.InfiniteReserve, tooltip: "CEInfiniteAmmo_InfiniteReserve_Desc".Translate()))
+            ammoMode = InfiniteAmmoMode.InfiniteReserve;
+        
+        if (list.RadioButton("CEInfiniteAmmo_InfiniteAmmo_Title".Translate(), ammoMode == InfiniteAmmoMode.InfiniteAmmo, tooltip: "CEInfiniteAmmo_InfiniteAmmo_Desc".Translate()))
+            ammoMode = InfiniteAmmoMode.InfiniteAmmo;
+        
+        list.Gap();
         
         // Infinite Turret Ammo
         list.CheckboxLabeled(
             "CEInfiniteAmmo_InfiniteTurretAmmo_Title".Translate(), 
             ref infiniteTurretAmmo, 
             "CEInfiniteAmmo_InfiniteTurretAmmo_Desc".Translate()
+        );
+        
+        // Infinite Mortar Ammo
+        list.CheckboxLabeled(
+            "CEInfiniteAmmo_InfiniteMortarAmmo_Title".Translate(), 
+            ref infiniteMortarAmmo, 
+            "CEInfiniteAmmo_InfiniteMortarAmmo_Desc".Translate()
         );
         
         // Infinite Grenades

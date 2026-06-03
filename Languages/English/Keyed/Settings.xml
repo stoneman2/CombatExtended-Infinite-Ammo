@@ -6,6 +6,11 @@
     <!-- Settings Headers -->
     <CEInfiniteAmmo_Settings_Header>Infinite Ammo Settings</CEInfiniteAmmo_Settings_Header>
     
+    <!-- Ammo Mode -->
+    <CEInfiniteAmmo_AmmoMode_Title>Ammo Mode</CEInfiniteAmmo_AmmoMode_Title>
+    <CEInfiniteAmmo_AmmoMode_Off>Normal (No Infinite Ammo)</CEInfiniteAmmo_AmmoMode_Off>
+    <CEInfiniteAmmo_AmmoMode_Off_Desc>Ammo is consumed normally. No infinite ammo effects.</CEInfiniteAmmo_AmmoMode_Off_Desc>
+    
     <!-- Infinite Ammo (No Reload) -->
     <CEInfiniteAmmo_InfiniteAmmo_Title>Infinite Ammo (No Reloading)</CEInfiniteAmmo_InfiniteAmmo_Title>
     <CEInfiniteAmmo_InfiniteAmmo_Desc>Weapons do not consume any ammo as long as you have that ammo type in your inventory.</CEInfiniteAmmo_InfiniteAmmo_Desc>
@@ -16,7 +21,11 @@
     
     <!-- Infinite Turret Ammo -->
     <CEInfiniteAmmo_InfiniteTurretAmmo_Title>Infinite Turret Ammo</CEInfiniteAmmo_InfiniteTurretAmmo_Title>
-    <CEInfiniteAmmo_InfiniteTurretAmmo_Desc>Turrets never run out of ammo. They still need to be loaded once initially.</CEInfiniteAmmo_InfiniteTurretAmmo_Desc>
+    <CEInfiniteAmmo_InfiniteTurretAmmo_Desc>Turrets (excluding mortars) never run out of ammo. They still need to be loaded once initially.</CEInfiniteAmmo_InfiniteTurretAmmo_Desc>
+    
+    <!-- Infinite Mortar Ammo -->
+    <CEInfiniteAmmo_InfiniteMortarAmmo_Title>Infinite Mortar Ammo</CEInfiniteAmmo_InfiniteMortarAmmo_Title>
+    <CEInfiniteAmmo_InfiniteMortarAmmo_Desc>Mortars fire infinitely once loaded. Switching ammo types returns the old shell and consumes a new one. Requires initial loading.</CEInfiniteAmmo_InfiniteMortarAmmo_Desc>
     
     <!-- Infinite Grenades -->
     <CEInfiniteAmmo_InfiniteGrenades_Title>Infinite Grenades / Thrown Weapons</CEInfiniteAmmo_InfiniteGrenades_Title>
